@@ -1,0 +1,61 @@
+const legendData = [
+  { code: "AGZ", label: "Agricultural", color: "#009600", borderColor: "#828282", borderWidth: 1 },
+  { code: "C/MP-Z", label: "Cemetery", color: "#64e164" },
+  { code: "C1-Z", label: "Commercial", color: "#ff0000" },
+  { code: "GI-Z", label: "Institutional", color: "#0000ff" },
+  { code: "I1-Z", label: "Industrial", color: "#9600c8" },
+  { code: "I2-Z", label: "Industrial", color: "#9d00c8" },
+  { code: "MU1-A", label: "Mixed Use", color: "#ffbee8" },
+  { code: "MU1-B", label: "Mixed Use", color: "#ff73de" },
+  { code: "MU1-C", label: "Mixed Use", color: "#ff01c4" },
+  { code: "MU1-D", label: "Mixed Use", color: "#a70084" },
+  { code: "MU2-A", label: "Mixed Use", color: "#ffa77f" },
+  { code: "MU2-B", label: "Mixed Use", color: "#ff7e7e" },
+  { code: "MU3", label: "Mixed Use", color: "#d69e9d" },
+  { code: "MU4-B", label: "Mixed Use", color: "#cd6798" },
+  { code: "Q-SZ", label: "Quarry", color: "#993300" },
+  { code: "PR-Z", label: "Parks and Open Spaces", color: "#64e164" },
+  { code: "R1-Z", label: "Residential", color: "#ffff00" },
+  { code: "UTS-Z", label: "Utilities", color: "#bebebe" },
+  { code: "Water", label: "Water", color: "#00c5ff" },
+  { code: "FZ-Prod", label: "Production Forest", color: "#006400" },
+  { code: "SPZ", label: "SPZ Forest", color: "#00734c" },
+  { code: "MZP-SZ", label: "Mariculture Park", color: "#afc8e1" },
+  { code: "WZ-Prod", label: "Production Municipal Water", color: "#afc8e1" },
+  { code: "T-Z", label: "Protected Land Use", color: "#ff9900" },
+
+  // Pattern zones (now using SVG backgrounds)
+  { code: "FZ-Prot", label: "Protection Forest", pattern: "diagonalBlack" },
+  {
+    code: "FZ-Prod (A&D)",
+    label: "Production Forest",
+    pattern: "diagonalYellow",
+  },
+  { code: "MUZ", label: "MUZ Forest", pattern: "diagonalGray" },
+  { code: "LF-SZ", label: "Landfill", pattern: "diagonalGray1" },
+  {
+    code: "SH-Z",
+    label: "Residential (Socialized Housing)",
+    pattern: "diagonalGray2",
+  },
+  {
+    code: "SEDZ",
+    label: "SEDZ",
+    pattern: "diagonalPurple",
+  },
+  { code: "PUD", label: "PUD", pattern: "diagonalPink" },
+  { code: "R2-Z", label: "Residential", pattern: "diagonalBrown" },
+  {
+    code: "FRS-SZ",
+    label: "Fishery Sanctuary Sub-Zone",
+    pattern: "diagonalBlack2",
+  },
+  { code: "Mn-SZ", label: "Protected Land Use", pattern: "diagonalBlue" },
+  {
+    code: "NBZ",
+    label: "Protected Land Use",
+    pattern: "dashedVerticalYellow",
+  },
+];
+
+export default legendData;
