@@ -11,9 +11,14 @@ import legendData from "../data/legendData";
 import PatternsSetup from '../map/PatternsSetup.jsx';
 import { createZoningStyle } from "../map/zoningStyle";
 
-const worldBounds = [
-  [-90, -180], // South-West
-  [90, 180],   // North-East
+// const worldBounds = [
+//   [-90, -180], // South-West
+//   [90, 180],   // North-East
+// ];
+
+const butuanCityBounds = [
+  [8.70, 125.30],
+  [9.10, 125.80],
 ];
 
 delete L.Icon.Default.prototype._getIconUrl;
@@ -217,8 +222,9 @@ function MapViewPage() {
         ref={mapRef}
         center={[8.9475, 125.5406]}
         zoom={13}
-        minZoom={2}
-        maxBounds={worldBounds}
+        minZoom={10}
+        maxZoom={19}
+        maxBounds={butuanCityBounds}
         maxBoundsViscosity={1.0}
         style={{ height: "100vh", width: "100%" }}
       >
