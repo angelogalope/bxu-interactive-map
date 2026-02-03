@@ -10,6 +10,7 @@ import { mdiMagnify } from '@mdi/js'
 import legendData from "../data/legendData";
 import PatternsSetup from '../map/PatternsSetup.jsx';
 import { createZoningStyle } from "../map/zoningStyle";
+import MapWatermarkOverlay from "../components/MapWatermarkOverlay.jsx";
 
 // const worldBounds = [
 //   [-90, -180], // South-West
@@ -62,7 +63,7 @@ function MapViewPage() {
 
   const onEachFeature = (feature, layer) => {
     if (feature.properties && feature.properties.HLURB) {
-      layer.bindPopup(`<strong>Landuse:</strong> ${feature.properties.LandUse}<br/><strong>HLURB:</strong> ${feature.properties.HLURB}`);
+      layer.bindPopup(`<strong>Landuse:</strong> ${feature.properties.LandUse}<br/><strong>HLURB:</strong> ${feature.properties.HLURB} <br/><strong>Allowable Uses:</strong> `);
     }
   };
 
@@ -234,6 +235,8 @@ function MapViewPage() {
           attribution="Tiles © Esri"
           noWrap={true}
         />
+
+        <MapWatermarkOverlay text="Not Official, For Reference Only" />
 
         <PatternsSetup onPatternsReady={setPatterns} />
 
