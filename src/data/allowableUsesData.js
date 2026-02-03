@@ -1227,7 +1227,38 @@ const allowableUsesData = {
 
     "Customary accessory uses incidental to any of the above uses such as:<br/>a. Staff houses and quarters<br/>b. Offices<br/>c. Eateries and canteens<br/>d. Parking lots and garage facilities<br/>e. Storerooms and warehouses necessary for business operations<br/>f. Pump houses<br/>g. Generator houses<br/>h. Public toilet facilities"
   ],
-  
+  "FZ-Prod": [
+    {
+      title: "PRODUCTION FOREST ZONE"
+    },
+
+    "Industrial Forest Plantation Sub-Zone (Per DENR DAO No. 99-53) - refers to any tract of land planted mainly to timber-producing tree species, including rubber, and/or non-timber species such as rattan and bamboo, primarily to supply the raw material requirements of forest-based industries, among others.",
+
+    "The Wood Processing Zone shall be the industrial forest plantation zone in which timber and non-timber forest products of the city shall be processed for value adding in accordance with the Comprehensive Development and Management Plan as approved by DENR, and relevant ordinances in relation to forest production and utilization. It shall be limited to non-invasive production forest activities and prohibits the logging of hardwood.",
+
+    "Allowable uses:<br/>i. Planting of timber-producing species compatible with the ecological and biophysical characteristics of the area, but not excluding rubber, durian and/or non-timber species like rattan and bamboo<br/>ii. Agricultural activities on a suitable area of at most ten percent (10%) of the plantation",
+
+    "Forest Buffer Sub-Zone (FB-SZ) - An area within the Forest Zone of the City outside the boundaries and immediately adjacent to designated protected areas that need specific management consideration and special development control in order to prevent or minimize harm/destruction to the said protected area, according to Section 8 of the NIPAS Act. The City of Butuan shall provide for a local ordinance declaring protected areas as national legislation to declare NIPAS sites are pending.",
+
+    "It shall serve as a fence to prevent encroachment into the protected area. In the areas along Agusan River, easement in forestlands shall be 40 meters.",
+
+    "Allowable uses:<br/>i. Utilization of this area shall be in accordance with the respective local ordinances and may include settlements, agriculture, sustainable land use and other low-intensity income-generating activities."
+  ],
+  "SPZ": [
+    {
+      title: "SPZ Forest"
+    }
+  ],
+  "MZP-SZ":[
+    {
+      title: "Mariculture Park"
+    }
+  ],
+  "WZ-Prod": [
+    {
+      title: "Production Munizipal Water"
+    }
+  ],
 };
 
 export default allowableUsesData;
