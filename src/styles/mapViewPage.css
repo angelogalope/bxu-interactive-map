@@ -29,6 +29,10 @@
   color: #888;
 }
 
+.map-watermark-overlay {
+  opacity: 0.9;
+}
+
 /* Container for the toggle */
 .toggle-switch {
   position: relative;

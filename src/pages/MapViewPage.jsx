@@ -10,10 +10,16 @@ import { mdiMagnify } from '@mdi/js'
 import legendData from "../data/legendData";
 import PatternsSetup from '../map/PatternsSetup.jsx';
 import { createZoningStyle } from "../map/zoningStyle";
+import MapWatermarkOverlay from "../components/MapWatermarkOverlay.jsx";
 
-const worldBounds = [
-  [-90, -180], // South-West
-  [90, 180],   // North-East
+// const worldBounds = [
+//   [-90, -180], // South-West
+//   [90, 180],   // North-East
+// ];
+
+const butuanCityBounds = [
+  [8.70, 125.30],
+  [9.10, 125.80],
 ];
 
 delete L.Icon.Default.prototype._getIconUrl;
@@ -57,7 +63,7 @@ function MapViewPage() {
 
   const onEachFeature = (feature, layer) => {
     if (feature.properties && feature.properties.HLURB) {
-      layer.bindPopup(`<strong>Landuse:</strong> ${feature.properties.LandUse}<br/><strong>HLURB:</strong> ${feature.properties.HLURB}`);
+      layer.bindPopup(`<strong>Landuse:</strong> ${feature.properties.LandUse}<br/><strong>HLURB:</strong> ${feature.properties.HLURB} <br/><strong>Allowable Uses:</strong> `);
     }
   };
 
@@ -217,8 +223,9 @@ function MapViewPage() {
         ref={mapRef}
         center={[8.9475, 125.5406]}
         zoom={13}
-        minZoom={2}
-        maxBounds={worldBounds}
+        minZoom={10}
+        maxZoom={19}
+        maxBounds={butuanCityBounds}
         maxBoundsViscosity={1.0}
         style={{ height: "100vh", width: "100%" }}
       >
@@ -228,6 +235,8 @@ function MapViewPage() {
           attribution="Tiles © Esri"
           noWrap={true}
         />
+
+        <MapWatermarkOverlay text="Not Official, For Reference Only" />
 
         <PatternsSetup onPatternsReady={setPatterns} />
 
