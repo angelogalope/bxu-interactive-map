@@ -40,7 +40,7 @@ function MapViewPage() {
   const [locationName, setLocationName] = useState('');
   const [isAllowableModalOpen, setIsAllowableModalOpen] = useState(false);
   const [selectedHlurb, setSelectedHlurb] = useState('');
-  const [selectedLandUse, setSelectedLandUse] = useState('');
+  // const [selectedLandUse, setSelectedLandUse] = useState('');
   const geoJsonRef = useRef();
   const mapRef = useRef();
 
@@ -67,7 +67,7 @@ function MapViewPage() {
 
   const openAllowableUsesModal = (hlurb, landUse) => {
     setSelectedHlurb(hlurb || '');
-    setSelectedLandUse(landUse || '');
+    // setSelectedLandUse(landUse || '');
     setIsAllowableModalOpen(true);
   };
 
