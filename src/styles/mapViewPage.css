@@ -29,6 +29,21 @@
   color: #888;
 }
 
+.allowable-uses-btn {
+  margin-top: 8px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.allowable-uses-btn:hover {
+  background: #1d4ed8;
+}
+
 .map-watermark-overlay {
   opacity: 0.9;
 }
@@ -82,4 +97,82 @@ input:checked + .slider {
 /* Move the knob when the checkbox is checked */
 input:checked + .slider::before {
   transform: translateX(11px);
+}
+
+/* Allowable Uses Modal */
+.allowable-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 16px;
+}
+
+.allowable-modal {
+  width: min(520px, 92vw);
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+  padding: 16px;
+  max-height: 80vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.allowable-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.allowable-modal-header h3 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.allowable-modal-close {
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  cursor: pointer;
+  line-height: 1;
+  color: #444;
+}
+
+.allowable-modal-meta {
+  font-size: 13px;
+  color: #333;
+  margin-bottom: 10px;
+  display: grid;
+  gap: 4px;
+}
+
+.allowable-modal-body ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.allowable-modal-list {
+  list-style: disc;
+}
+
+.allowable-modal-body li {
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: #222;
+}
+
+.allowable-modal-item span {
+  display: block;
+  white-space: normal;
+  line-height: 1.4;
+}
+
+.allowable-modal-empty {
+  font-size: 13px;
+  color: #666;
 }

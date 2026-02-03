@@ -11,6 +11,7 @@ import legendData from "../data/legendData";
 import PatternsSetup from '../map/PatternsSetup.jsx';
 import { createZoningStyle } from "../map/zoningStyle";
 import MapWatermarkOverlay from "../components/MapWatermarkOverlay.jsx";
+import allowableUsesData from "../data/allowableUsesData";
 
 // const worldBounds = [
 //   [-90, -180], // South-West
@@ -37,6 +38,9 @@ function MapViewPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [markerPos, setMarkerPos] = useState(null);
   const [locationName, setLocationName] = useState('');
+  const [isAllowableModalOpen, setIsAllowableModalOpen] = useState(false);
+  const [selectedHlurb, setSelectedHlurb] = useState('');
+  const [selectedLandUse, setSelectedLandUse] = useState('');
   const geoJsonRef = useRef();
   const mapRef = useRef();
 
@@ -61,9 +65,61 @@ function MapViewPage() {
     [patterns, visibleZones]
   );
 
+  const openAllowableUsesModal = (hlurb, landUse) => {
+    setSelectedHlurb(hlurb || '');
+    setSelectedLandUse(landUse || '');
+    setIsAllowableModalOpen(true);
+  };
+
+  const closeAllowableUsesModal = () => {
+    setIsAllowableModalOpen(false);
+  };
+
+  useEffect(() => {
+    if (!isAllowableModalOpen) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        closeAllowableUsesModal();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isAllowableModalOpen]);
+
+  const formatAllowableUse = (item) => {
+    if (typeof item === 'object' && item !== null && !Array.isArray(item)) {
+      return item.content || item.text || '';
+    }
+    
+    if (Array.isArray(item)) {
+      return item.map(entry => String(entry ?? '')).join('<br/>');
+    }
+
+    return String(item ?? '').replace(/\n/g, '<br/>');
+  };
+
   const onEachFeature = (feature, layer) => {
     if (feature.properties && feature.properties.HLURB) {
-      layer.bindPopup(`<strong>Landuse:</strong> ${feature.properties.LandUse}<br/><strong>HLURB:</strong> ${feature.properties.HLURB} <br/><strong>Allowable Uses:</strong> `);
+      const hlurb = feature.properties.HLURB;
+      const landUse = feature.properties.LandUse;
+
+      layer.bindPopup(
+        `<strong>Landuse:</strong> ${landUse}<br/>` +
+        `<strong>HLURB:</strong> ${hlurb}<br/>` +
+        `<button type="button" class="allowable-uses-btn">View Allowable Uses</button>`
+      );
+
+      layer.on('popupopen', (e) => {
+        const popupEl = e.popup.getElement();
+        if (!popupEl) return;
+
+        const button = popupEl.querySelector('.allowable-uses-btn');
+        if (button) {
+          button.onclick = () => openAllowableUsesModal(hlurb, landUse);
+        }
+      });
     }
   };
 
@@ -257,6 +313,45 @@ function MapViewPage() {
         )}
 
       </MapContainer>
+
+      {isAllowableModalOpen && (() => {
+        const normalizedHlurb = selectedHlurb?.startsWith("SEDZ") ? "SEDZ" : selectedHlurb;
+        const allowableUses = allowableUsesData[normalizedHlurb] || [];
+
+        return (
+          <div className="allowable-modal-backdrop" role="dialog" aria-modal="true" onClick={closeAllowableUsesModal}>
+            <div className="allowable-modal" onClick={(e) => e.stopPropagation()}>
+              <div className="allowable-modal-header">
+                <h3>
+                  Allowable Uses for {allowableUses.map((item, index) => (
+                      item.title && index === 0 ? item.title : null
+                    ))}:
+                </h3>
+                <button type="button" className="allowable-modal-close" onClick={closeAllowableUsesModal} aria-label="Close">×</button>
+              </div>
+              <div className="allowable-modal-body">
+                {(() => {
+                  const filteredUses = allowableUses.filter(item => 
+                    !(typeof item === 'object' && item !== null && !Array.isArray(item) && item.title)
+                  );
+                  
+                  return filteredUses.length > 0 ? (
+                    <ul className="allowable-modal-list">
+                      {filteredUses.map((item, index) => (
+                        <li key={`${item}-${index}`} className="allowable-modal-item">
+                          <span dangerouslySetInnerHTML={{ __html: formatAllowableUse(item) }} />
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <div className="allowable-modal-empty">No allowable uses listed for this zone.</div>
+                  );
+                })()}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
