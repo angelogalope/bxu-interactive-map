@@ -12,6 +12,9 @@ import PatternsSetup from '../map/PatternsSetup.jsx';
 import { createZoningStyle } from "../map/zoningStyle";
 import MapWatermarkOverlay from "../components/MapWatermarkOverlay.jsx";
 import allowableUsesData from "../data/allowableUsesData";
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
 // const worldBounds = [
 //   [-90, -180], // South-West
@@ -26,9 +29,9 @@ const butuanCityBounds = [
 delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
-  iconUrl: require('leaflet/dist/images/marker-icon.png'),
-  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
 })
 
 function MapViewPage() {
