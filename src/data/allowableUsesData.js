@@ -1211,7 +1211,7 @@ const allowableUsesData = {
   ],
   "UTS-Z": [
     {
-      title: "UTILITIES, TRANSPORTATION AND SERVICES ZONE"
+      title: "UTILITIES, TRANSPORTATION AND SERVICES ZONE (UTS-Z)"
     },
 
     "Bus and terminals",
@@ -1229,7 +1229,7 @@ const allowableUsesData = {
   ],
   "FZ-Prod": [
     {
-      title: "PRODUCTION FOREST ZONE"
+      title: "PRODUCTION FOREST ZONE (FZ-Prod)"
     },
 
     "Industrial Forest Plantation Sub-Zone (Per DENR DAO No. 99-53) - refers to any tract of land planted mainly to timber-producing tree species, including rubber, and/or non-timber species such as rattan and bamboo, primarily to supply the raw material requirements of forest-based industries, among others.",
@@ -1246,18 +1246,296 @@ const allowableUsesData = {
   ],
   "SPZ": [
     {
-      title: "SPZ Forest"
+      title: "SPZ Forest (SPZ)"
     }
   ],
   "MZP-SZ":[
     {
-      title: "Mariculture Park"
+      title: "Mariculture Park (MZP-SZ)"
     }
   ],
   "WZ-Prod": [
     {
-      title: "Production Munizipal Water"
+      title: "Production Munizipal Water (WZ-Prod)"
     }
+  ],
+  "T-Z": [
+    {
+      title: "TOURISM ZONE (T-Z)"
+    },
+
+    "Tourism Zones have the following standard ratio for buildable and open space:<br/>Maximum of Fifty percent (50%) Buildable Area<br/>Thirty percent (30%) for Open Circulatory Space<br/>Minimum of Twenty percent (20%) Green Space<br/>The total percentage ratio of which is one hundred percent (100%).",
+
+    "Allowable uses include:<br/>Agri-tourism<br/>Resort areas<br/>Theme parks<br/>Heritage and Historical Sites<br/>Other related activities such as tree parks and botanical gardens<br/>Tourism accommodations such as:<br/>a. Cottages<br/>b. Lodging inns<br/>c. Restaurants<br/>d. Home stays<br/>Souvenir shops<br/>Open air outdoor sports activities<br/>Food production and processing activities such as vegetables, fruits and plantation crops and fish production to sustain the tourism industry<br/>Parking areas",
+
+    "Building/Structure Design Regulations:<br/>Per the relevant provisions of the National Building Code and this Ordinance<br/>Subject to national locational and building guidelines and standards of concerned agencies"
+  ],
+  "FZ-Prot": [
+      {
+        title: "PROTECTION FOREST ZONE (FZ-Prot)"
+      },
+
+      "<h4>Forest Reserve Sub-Zone</h4>",
+      "Reforestation",
+      "Religious ceremonies and burial sites of Indigenous Peoples",
+      "Scientific studies provided that there is no gathering of species or alteration of the area",
+      "Building/Structure Design Regulations: No permanent structures are allowed",
+
+      "<h4>Civil Reservation Sub-Zone</h4>",
+      "Areas of public domain proclaimed by the President of the Philippines or Congress for specific purposes such as town sites, resettlement areas, ancestral lands, and similar uses",
+      "Allowable uses shall be as provided in each specific proclamation or regulation",
+      "Development of the Forest Land Use Plan (FLUP) and Indigenous Peoples’ Development Program shall aid in regulating forest and ancestral lands",
+      "Building/Structure Design Regulations: No permanent structures are allowed",
+
+      "<h4>Military Reservation Sub-Zone</h4>",
+      "Military-related uses such as airbases, campsites, docks and harbors, firing ranges, naval bases, target ranges, wharves, and similar facilities",
+      "Allowable uses and activities shall be as provided in Proclamation No. 113 (s.1936) and Proclamation No. 658 (s.1940) and other applicable issuances",
+      "Building/Structure Design Regulations: Buildings and structures shall comply with the regulations provided in this Ordinance",
+
+      "<h4>Mangrove Sub-Zone</h4>",
+      "Mangrove plantations",
+      "Aquasilviculture",
+      "Fish polyculture",
+      "Eco-tourism",
+      "Edu-tourism",
+      "Mangrove areas shall be rehabilitated through reforestation",
+      "Activities that damage the ecosystem such as clearing mangrove forests for fishpond development are prohibited",
+      "Building/Structure Design Regulations: No permanent buildings or structures are allowed"
+  ],
+  "FZ-Prod (A&D)": [
+    {
+      title: "PRODUCTION FOREST ZONE (FZ-Prod A&D)"
+    }
+  ],
+  "MUZ": [
+    {
+      title: "MUZ Forest (MUZ)"
+    }
+  ],
+  "LF-SZ": [
+    {
+      title: "Landfill (LF-SZ)"
+    }
+  ],
+  "SH-Z": [
+    {
+      title: "RESIDENTIAL SOCIALIZED HOUSING ZONE (SH-Z)"
+    },
+    "Single, detached row houses",
+    "Multi-level residential buildings"
+  ],
+  "SEDZ": [
+    {
+      title: "(SEDZ)"
+    }
+  ],
+  "SEDZ-1 (Logisti*": [
+    {
+      title: "SEDZ-1 (Logistics)"
+    }
+  ],
+  "SEDZ-1 (Port Ar*": [
+    {
+      title: "SEDZ-1 (Port Area)"
+    }
+  ],
+  "SEDZ 2A": [
+    {
+      "title": "SEDZ 2A"
+    },
+
+    "<h4>Allowable Uses</h4>",
+    "Research and development on wood and other by-products",
+    "Sawmills",
+    "Plywood and veneer plants",
+    "Wood treating plants",
+    "Blockboard, fiberboard, particle board, and other wood-based plants",
+    "Commercial establishments in support of the wood-based industry",
+    "Low-density residential areas mainly intended for workers"
+  ],
+  "SEDZ-2B": [
+    {
+      title: "(SEDZ 2B)"
+    },
+  ],
+  "SEDZ 3": [
+    {
+      title: "(SEDZ 3)"
+    },
+
+    "<h4>Allowable Uses</h4>",
+    "Rice, corn, flour, and cassava mills",
+    "Warehouses and solar dryers",
+    "Drying, cleaning, and curing facilities",
+    "Canning and preserving of fruits and vegetables",
+    "Manufacturing and processing of other food products",
+    "Support facilities",
+    "Low-density residential areas",
+    "Commercial establishments complementary to the industry such as stores and souvenir shops",
+
+    "<h4>Prohibited Uses</h4>",
+    "Pollutive and hazardous industries",
+    "Establishments non-complementary with the protected watershed"
+  ],
+  "R2-Z": [
+    {
+      "title": "RESIDENTIAL-2 ZONE (R2-Z)"
+    },
+
+    "<h4>Allowable Uses (In addition to all uses allowed in Residential-1 Zone)</h4>",
+    "Apartments",
+    "Boarding houses",
+    "Dormitories",
+    "Museums",
+    "Libraries",
+    "High schools",
+    "Vocational schools",
+
+    "<h4>Allowable Uses in Residential-1 Zone (R1-Z)</h4>",
+    "Single-detached dwelling units",
+    "Semi-detached family dwelling units",
+    "Residential subdivisions compliant with PD 957 standards",
+
+    "<h4>Home Occupation (R1-Z)</h4>",
+    "Practice of one’s profession or home-based businesses such as tailoring, baking, and sari-sari stores, subject to the following conditions:",
+    "Maximum of five (5) persons engaged including the owner",
+    "No traffic generation beyond what is normal in a residential neighborhood and parking demand must be accommodated",
+    "No equipment that creates noise, vibration, fumes, odors, or electrical interference detectable off the premises",
+
+    "<h4>Home Industry (Cottage Industry)</h4>",
+    "Shall not occupy more than thirty percent (30%) of the residential floor area",
+    "No change in the outside appearance of the dwelling unit",
+    "Must be non-pollutive and non-hazardous as provided in this Ordinance"
+  ],
+  "PUD": [
+    {
+      title: "PLANNED UNIT DEVELOPMENT (PUD) ZONE – UNIVERSITY TOWN"
+    },
+
+    "<h4>Allowable Uses</h4>",
+    "Commercial activities providing basic social services to the university population and regional government offices such as convenience stores, banks, laundry shops, grocery stores, and supermarkets",
+    "Performing centers",
+    "Exhibition halls",
+    "Museums",
+    "Galleries",
+    "Research facilities",
+    "Low-density residential development for the university population",
+    "Transient housing for students, academic staff, and non-academic staff",
+    "Affordable housing development for government employees and the university population",
+    "Public open spaces, parks, and other green spaces",
+    "Libraries and other learning hubs",
+    "Community service providers such as beauty salons, barber shops, spas, dental and medical clinics, pet shops, bookshops, repair shops (shoe, key, car), photocopy services, and notarial offices",
+    "Food retail establishments including cafes and restaurants",
+    "Low-intensity activities",
+
+    "<h4>Restrictions</h4>",
+    "Gambling establishments of any form shall be located at least one hundred (100) meters away from educational and governmental institutions",
+    "Bars, discos, and establishments of ill repute shall be located at least one hundred (100) meters away from educational and governmental institutions",
+    "Industrial activities are restricted within the zone",
+    "Noise- and vibration-generating activities that may disturb wildlife and ecotourism activities are prohibited"
+  ],
+  "PUD 1": [
+    {
+      "title": "PLANNED UNIT DEVELOPMENT (PUD) 1 – UPTOWN BANCASI AIRPORT"
+    },
+
+    "<h4>Allowable Uses</h4>",
+    "Boutique hotels",
+    "Convention centers",
+    "Event venues",
+    "Commercial centers",
+    "Business and Information Technology offices",
+    "Warehouses",
+    "Low-density residential development as allowed under R-1, R-2, or applicable CAAP regulations",
+    "Casinos authorized by law, limited to a maximum of three (3) at any given time",
+
+    "<h4>Residential Uses – R-1</h4>",
+    "Single-detached dwelling units",
+    "Semi-detached family dwelling units",
+    "Residential subdivisions compliant with PD 957 standards",
+
+    "<h4>Home Occupation (R-1)</h4>",
+    "Practice of one’s profession or home-based businesses such as tailoring, baking, and sari-sari stores, subject to the following conditions:",
+    "Maximum of five (5) persons engaged including the owner",
+    "No traffic generation beyond what is normal in a residential neighborhood and parking demand must be accommodated",
+    "No equipment that creates noise, vibration, fumes, odors, or electrical interference detectable off the premises",
+
+    "<h4>Home Industry (Cottage Industry – R-1)</h4>",
+    "Shall not occupy more than thirty percent (30%) of the residential floor area",
+    "No change in the outside appearance of the dwelling unit",
+    "Must be non-pollutive and non-hazardous",
+
+    "<h4>Residential Uses – R-2</h4>",
+    "Apartments",
+    "Boarding houses",
+    "Dormitories",
+    "Museums",
+    "Libraries",
+    "High schools",
+    "Vocational schools",
+
+    "<h4>Prohibited Uses</h4>",
+    "Pollutive and hazardous industries",
+    "Industries that emit strong odors or fumes",
+    "Structures that may destroy or adversely affect archaeological, heritage, and tourist sites such as the Butuan Balangay Museum and the proposed Bood Promontory Heritage Park"
+  ],
+  "PUD 3": [
+    {
+      "title": "PLANNED UNIT DEVELOPMENT (PUD) 3 – HIGHLANDS ZONE"
+    },
+
+    "<h4>Allowable Uses</h4>",
+    "Ecotourism activities",
+    "Leisure hubs",
+    "Low-density and low-intensity commercial areas",
+    "Residential development (R-1 and R-2)",
+
+    "<h4>Residential Uses – R-1</h4>",
+    "Single-detached dwelling units",
+    "Semi-detached family dwelling units",
+    "Residential subdivisions per PD 957 standards",
+
+    "<h4>Home Occupation (R-1)</h4>",
+    "Practice of one’s profession or home-based businesses such as tailoring, baking, and sari-sari stores, subject to the following:",
+    "Maximum of five (5) persons engaged including the owner",
+    "No traffic generation beyond normal for a residential neighborhood; parking must be accommodated",
+    "No equipment creating noise, vibration, fumes, odors, or electrical interference detectable off-premises",
+
+    "<h4>Home Industry (Cottage Industry – R-1)</h4>",
+    "Shall not occupy more than thirty percent (30%) of the residential floor area",
+    "No change in the outside appearance of the dwelling unit",
+    "Must be non-pollutive and non-hazardous",
+
+    "<h4>Residential Uses – R-2</h4>",
+    "Apartments",
+    "Boarding houses",
+    "Dormitories",
+    "Museums",
+    "Libraries",
+    "High schools",
+    "Vocational schools",
+
+    "<h4>Prohibited Uses</h4>",
+    "Industrial activities",
+    "Noise- and vibration-generating activities that may disturb wildlife and ecotourism activities"
+  ],
+  "NBZ": [
+    {
+      "title": "PROTECTED LAND USE AREAS (PLUA) – NO BUILD ZONE"
+    },
+
+    "<h4>Description</h4>",
+    "Land areas with the presence of natural resources and vegetation such as mangroves, forests, rivers, seas, and beachfronts that serve as natural habitats of endemic species",
+    "Includes heritage sites, archaeological sites, and areas with historical significance",
+    "Includes danger-prone areas with high vulnerability to natural disasters such as riverbanks, coastal areas, low-lying areas, and rain-induced landslide-prone areas near mountain edges and foothills",
+    "Areas are monitored and regulated with limited allowable physical development",
+
+    "<h4>Buffer Strips / Easements (Section 40)</h4>",
+    "Easements for the protection of water resources shall be observed along rivers, creeks, streams, seashores, lakes, and all waterways",
+
+    "<h4>Agusan River Easement</h4>",
+    "Protection buffer of two hundred (200) meters on both sides of the river",
+    "No-build zone within the fifty (50) to one hundred fifty (150) meter buffer on both sides of the river"
   ],
 };
 

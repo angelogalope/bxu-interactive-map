@@ -12,6 +12,9 @@ import PatternsSetup from '../map/PatternsSetup.jsx';
 import { createZoningStyle } from "../map/zoningStyle";
 import MapWatermarkOverlay from "../components/MapWatermarkOverlay.jsx";
 import allowableUsesData from "../data/allowableUsesData";
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
 // const worldBounds = [
 //   [-90, -180], // South-West
@@ -26,9 +29,9 @@ const butuanCityBounds = [
 delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
-  iconUrl: require('leaflet/dist/images/marker-icon.png'),
-  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
 })
 
 function MapViewPage() {
@@ -65,8 +68,22 @@ function MapViewPage() {
     [patterns, visibleZones]
   );
 
-  const openAllowableUsesModal = (hlurb, landUse) => {
-    setSelectedHlurb(hlurb || '');
+  const openAllowableUsesModal = (hlurb, landUse, featureProps) => {
+    let resolvedKey = hlurb || '';
+
+    // Special-case: differentiate multiple PUD polygons by OBJECTID
+    if (resolvedKey === 'PUD' && featureProps && featureProps.OBJECTID) {
+      const oid = featureProps.OBJECTID;
+      // Map known OBJECTIDs to specific PUD variants defined in allowableUsesData
+      // OBJECTID 209 -> PLANNED UNIT DEVELOPMENT (PUD) ZONE – UNIVERSITY TOWN
+      // OBJECTID 210 -> PLANNED UNIT DEVELOPMENT (PUD) 1 – UPTOWN BANCASI AIRPORT
+      // OBJECTID 211 -> PLANNED UNIT DEVELOPMENT (PUD) 3 – HIGHLANDS ZONE
+      if (oid === 209) resolvedKey = 'PUD';
+      else if (oid === 211) resolvedKey = 'PUD 1';
+      else if (oid === 210) resolvedKey = 'PUD 3';
+    }
+
+    setSelectedHlurb(resolvedKey);
     // setSelectedLandUse(landUse || '');
     setIsAllowableModalOpen(true);
   };
@@ -117,7 +134,8 @@ function MapViewPage() {
 
         const button = popupEl.querySelector('.allowable-uses-btn');
         if (button) {
-          button.onclick = () => openAllowableUsesModal(hlurb, landUse);
+          // pass the feature properties so the modal can resolve PUD variants
+          button.onclick = () => openAllowableUsesModal(hlurb, landUse, feature.properties);
         }
       });
     }
@@ -280,7 +298,7 @@ function MapViewPage() {
         center={[8.9475, 125.5406]}
         zoom={13}
         minZoom={10}
-        maxZoom={19}
+        maxZoom={18}
         maxBounds={butuanCityBounds}
         maxBoundsViscosity={1.0}
         style={{ height: "100vh", width: "100%" }}
@@ -315,15 +333,15 @@ function MapViewPage() {
       </MapContainer>
 
       {isAllowableModalOpen && (() => {
-        const normalizedHlurb = selectedHlurb?.startsWith("SEDZ") ? "SEDZ" : selectedHlurb;
-        const allowableUses = allowableUsesData[normalizedHlurb] || [];
+        // const normalizedHlurb = selectedHlurb?.startsWith("SEDZ") ? "SEDZ" : selectedHlurb;
+        const allowableUses = allowableUsesData[selectedHlurb] || [];
 
         return (
           <div className="allowable-modal-backdrop" role="dialog" aria-modal="true" onClick={closeAllowableUsesModal}>
             <div className="allowable-modal" onClick={(e) => e.stopPropagation()}>
               <div className="allowable-modal-header">
                 <h3>
-                  Allowable Uses for {allowableUses.map((item, index) => (
+                  Allowable Uses for {allowableUses?.map((item, index) => (
                       item.title && index === 0 ? item.title : null
                     ))}:
                 </h3>
@@ -331,7 +349,7 @@ function MapViewPage() {
               </div>
               <div className="allowable-modal-body">
                 {(() => {
-                  const filteredUses = allowableUses.filter(item => 
+                  const filteredUses = allowableUses?.filter(item => 
                     !(typeof item === 'object' && item !== null && !Array.isArray(item) && item.title)
                   );
                   
