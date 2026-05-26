@@ -6,27 +6,74 @@
 .searchBar {
   position: absolute;
   display: flex;
+  gap: 10px;
   align-items: center;
   top: 10px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
-  width: 60%;
-  max-width: 400px;
+  width: min(92vw, 620px);
 }
 
-.searchBar input {
-  width: 100%;
-  padding: 18px;
-  padding-left: 20px;
-  border: 1px solid #ccc;
-  border-radius: 100px;
+.barangayDropdownLabel {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid rgba(31, 41, 55, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+}
+
+.barangayDropdownLabel span {
+  flex: 0 0 auto;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #475569;
+}
+
+.barangayDropdownLabel select {
+  flex: 1;
+  min-width: 0;
+  border: none;
   outline: none;
+  background: transparent;
+  color: #0f172a;
+  font-size: 14px;
+  appearance: none;
+  cursor: pointer;
 }
 
-.searchBar svg {
-  margin-left: -35px;
-  color: #888;
+.barangaySearchButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 999px;
+  background: #0f172a;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.2);
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+}
+
+.barangaySearchButton:hover:not(:disabled) {
+  background: #111827;
+  transform: translateY(-1px);
+}
+
+.barangaySearchButton:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
 .allowable-uses-btn {
@@ -46,6 +93,17 @@
 
 .map-watermark-overlay {
   opacity: 0.9;
+}
+
+@media (max-width: 640px) {
+  .searchBar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .barangaySearchButton {
+    justify-content: center;
+  }
 }
 
 /* Container for the toggle */

@@ -16,6 +16,97 @@ import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
+const barangays = [
+  'Agao',
+  'Agusan Pequeño',
+  'Ambago',
+  'Ampayon',
+  'Amparo',
+  'Anticala',
+  'Antongalon',
+  'Aupagan',
+  'Baan Km. 3',
+  'Baan Riverside',
+  'Babag',
+  'Bading',
+  'Baobaoan',
+  'Bancasi',
+  'Banza',
+  'Basag',
+  'Bayanihan',
+  'Bilay',
+  'Bitan-agan',
+  'Bit-os',
+  'Bobon',
+  'Bonbon',
+  'Bugsukan',
+  'Bugsukan',
+  'Buhangin',
+  'Cabcabon',
+  'Camayahan',
+  'Dagohoy',
+  'Dankias',
+  'Datu Silongan',
+  'De Oro',
+  'Diego Silang',
+  'Doongan',
+  'Don Francisco',
+  'Dulag',
+  'Dumalagan',
+  'Florida',
+  'Fort Poyohon (New Asia)',
+  'Golden Ribbon',
+  'Holy Redeemer',
+  'Humabon',
+  'Imadejas',
+  'Jose Rizal',
+  'Kinamlutan',
+  'Lapu-Lapu',
+  'Lemon',
+  'Leon Kilat',
+  'Libertad',
+  'Limaha',
+  'Los Angeles',
+  'Lumbocan',
+  'Maguinda',
+  'Mahay',
+  'Mahogany',
+  'Maibu',
+  'Mandamo',
+  'Manila de Bugabus',
+  'Maon',
+  'Masao',
+  'Maug',
+  'New Society Village',
+  'Nongnong',
+  'Obrero',
+  'Ong Yiu',
+  'Pagatpatan',
+  'Pangabugan',
+  'Pianing',
+  'Pigdaulan',
+  'Pinamanculan',
+  'Rajah Soliman',
+  'Salvacion',
+  'San Ignacio',
+  'San Mateo',
+  'Santo Niño',
+  'San Vicente',
+  'Sikatuna',
+  'Sumile',
+  'Sumilihon',
+  'Tagabaca',
+  'Taguibo',
+  'Taligaman',
+  'Tandang Sora',
+  'Tiniwisan',
+  'Tungao',
+  'Urduja',
+  'Villa Kananga',
+];
+
+const uniqueBarangays = Array.from(new Set(barangays));
+
 // const worldBounds = [
 //   [-90, -180], // South-West
 //   [90, 180],   // North-East
@@ -38,7 +129,7 @@ function MapViewPage() {
   const [gj, setGj] = useState(null);
   const [patterns, setPatterns] = useState(null);
   const [visibleZones, setVisibleZones] = useState({});
-  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedBarangay, setSelectedBarangay] = useState('');
   const [markerPos, setMarkerPos] = useState(null);
   const [locationName, setLocationName] = useState('');
   const [isAllowableModalOpen, setIsAllowableModalOpen] = useState(false);
@@ -240,10 +331,10 @@ function MapViewPage() {
     }
   };
 
-  const handleSearch = async () => {
-    if (!searchTerm) return;
+  const handleBarangaySelect = async (barangay) => {
+    if (!barangay) return;
 
-    const query = `${searchTerm}, Butuan City`;
+    const query = `${barangay}, Butuan City`;
     const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`;
 
     try {
@@ -275,23 +366,34 @@ function MapViewPage() {
   return (
     <div className='mapView'>
       <div className='searchBar'>
-        <input 
-          type="text" 
-          placeholder="Search barangay..." 
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              handleSearch();
-            }
-          }}
-        />
-        <Icon 
-          path={mdiMagnify} 
-          size={1} 
-          onClick={handleSearch}
-          style={{ cursor: 'pointer' }}
-        />
+        <label className="barangayDropdownLabel" htmlFor="barangay-select">
+          <span>Barangays</span>
+          <select
+            id="barangay-select"
+            value={selectedBarangay}
+            onChange={(e) => {
+              const barangay = e.target.value;
+              setSelectedBarangay(barangay);
+              handleBarangaySelect(barangay);
+            }}
+          >
+            <option value="">Select a barangay</option>
+            {uniqueBarangays.map((barangay) => (
+              <option key={barangay} value={barangay}>
+                {barangay}
+              </option>
+            ))}
+          </select>
+        </label>
+        <button
+          type="button"
+          className="barangaySearchButton"
+          onClick={() => handleBarangaySelect(selectedBarangay)}
+          disabled={!selectedBarangay}
+        >
+          <Icon path={mdiMagnify} size={0.9} />
+          Find
+        </button>
       </div>
       <MapContainer 
         ref={mapRef}
