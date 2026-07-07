@@ -1,13 +1,13 @@
 import '../styles/mapViewPage.css';
-import { MapContainer, TileLayer, GeoJSON, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, Marker } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet.pattern";
 import L from 'leaflet';
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import ZoningLegend from "../components/ZoningLegend.jsx";
 import Icon from '@mdi/react';
 import { mdiMagnify } from '@mdi/js'
-import legendData from "../data/legendData";
+import legendData from "../data/legendData.js"
 import PatternsSetup from '../map/PatternsSetup.jsx';
 import { createZoningStyle } from "../map/zoningStyle";
 import MapWatermarkOverlay from "../components/MapWatermarkOverlay.jsx";
@@ -15,6 +15,12 @@ import allowableUsesData from "../data/allowableUsesData";
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+
+// const worldBounds = [
+//   [-90, -180], // South-West
+//   [90, 180],   // North-East
+// ];
+
 
 const barangays = [
   'Agao',
@@ -39,7 +45,6 @@ const barangays = [
   'Bit-os',
   'Bobon',
   'Bonbon',
-  'Bugsukan',
   'Bugsukan',
   'Buhangin',
   'Cabcabon',
@@ -107,11 +112,6 @@ const barangays = [
 
 const uniqueBarangays = Array.from(new Set(barangays));
 
-// const worldBounds = [
-//   [-90, -180], // South-West
-//   [90, 180],   // North-East
-// ];
-
 const butuanCityBounds = [
   [8.70, 125.30],
   [9.10, 125.80],
@@ -131,12 +131,84 @@ function MapViewPage() {
   const [visibleZones, setVisibleZones] = useState({});
   const [selectedBarangay, setSelectedBarangay] = useState('');
   const [markerPos, setMarkerPos] = useState(null);
-  const [locationName, setLocationName] = useState('');
+  // const [locationName, setLocationName] = useState('');
+  const [popupContent, setPopupContent] = useState('');
   const [isAllowableModalOpen, setIsAllowableModalOpen] = useState(false);
   const [selectedHlurb, setSelectedHlurb] = useState('');
   // const [selectedLandUse, setSelectedLandUse] = useState('');
+  const [searchMode, setSearchMode] = useState('barangay');
+  const [barangayFilter, setBarangayFilter] = useState('');
+  const [coordLat, setCoordLat] = useState('');
+  const [coordLng, setCoordLng] = useState('');
+  const [showBarangayDropdown, setShowBarangayDropdown] = useState(false);
+  const [zoneOpacity, setZoneOpacity] = useState(0.7);
+  const [osmResults, setOsmResults] = useState([]);
   const geoJsonRef = useRef();
+
+  const filteredBarangays = useMemo(
+    () => uniqueBarangays.filter(b =>
+      b.toLowerCase().includes(barangayFilter.toLowerCase())
+    ),
+    [barangayFilter]
+  );
+
   const mapRef = useRef();
+  const markerRef = useRef(null);
+  const popupHandlerRef = useRef(null);
+  const popupDataRef = useRef({ hlurb: '', landUse: '', featureProps: null });
+  const searchTimerRef = useRef(null);
+  const searchAbortRef = useRef(null);
+
+  useEffect(() => {
+    if (!barangayFilter.trim()) {
+      setOsmResults([]);
+      return;
+    }
+    clearTimeout(searchTimerRef.current);
+    searchTimerRef.current = setTimeout(() => {
+      if (searchAbortRef.current) searchAbortRef.current.abort();
+      const controller = new AbortController();
+      searchAbortRef.current = controller;
+      const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(barangayFilter)}&format=json&limit=10&bounded=1&viewbox=125.30,8.70,125.80,9.10&countrycodes=ph`;
+      fetch(url, { signal: controller.signal })
+        .then(res => res.json())
+        .then(data => setOsmResults(data.filter(r => r.display_name?.toLowerCase().includes('butuan'))))
+        .catch(e => { if (e.name !== 'AbortError') console.error(e); });
+    }, 400);
+    return () => clearTimeout(searchTimerRef.current);
+  }, [barangayFilter]);
+
+  const pointInRing = (point, ring) => {
+    const [x, y] = point;
+    let inside = false;
+    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+      const [xi, yi] = ring[i];
+      const [xj, yj] = ring[j];
+      if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) {
+        inside = !inside;
+      }
+    }
+    return inside;
+  };
+
+  const findZoningAtPoint = (latlng) => {
+    if (!gj) return null;
+    const pt = [latlng[1], latlng[0]];
+    for (const feature of gj.features) {
+      const coords = feature.geometry.type === 'Polygon'
+        ? [feature.geometry.coordinates]
+        : feature.geometry.coordinates || [];
+      for (const poly of coords) {
+        if (!pointInRing(pt, poly[0])) continue;
+        let inHole = false;
+        for (let h = 1; h < poly.length; h++) {
+          if (pointInRing(pt, poly[h])) { inHole = true; break; }
+        }
+        if (!inHole) return feature.properties;
+      }
+    }
+    return null;
+  };
 
   useEffect(() => {
     fetch("/data/CLUP_landuse1.geojson")
@@ -155,9 +227,20 @@ function MapViewPage() {
   }, []);
 
   const zoningStyle = useMemo(
-    () => createZoningStyle({ patterns, visibleZones }),
-    [patterns, visibleZones]
+    () => createZoningStyle({ patterns, visibleZones, opacity: zoneOpacity }),
+    [patterns, visibleZones, zoneOpacity]
   );
+
+  const handleSliderDrag = useCallback((val) => {
+    if (geoJsonRef.current) {
+      geoJsonRef.current.eachLayer(layer => {
+        const hlurb = layer.feature?.properties?.HLURB;
+        if (hlurb && visibleZones[hlurb] !== false) {
+          layer.setStyle({ fillOpacity: val });
+        }
+      });
+    }
+  }, [visibleZones]);
 
   const openAllowableUsesModal = (hlurb, landUse, featureProps) => {
     let resolvedKey = hlurb || '';
@@ -213,24 +296,56 @@ function MapViewPage() {
       const hlurb = feature.properties.HLURB;
       const landUse = feature.properties.LandUse;
 
-      layer.bindPopup(
-        `<strong>Landuse:</strong> ${landUse}<br/>` +
-        `<strong>HLURB:</strong> ${hlurb}<br/>` +
-        `<button type="button" class="allowable-uses-btn">View Allowable Uses</button>`
-      );
-
-      layer.on('popupopen', (e) => {
-        const popupEl = e.popup.getElement();
-        if (!popupEl) return;
-
-        const button = popupEl.querySelector('.allowable-uses-btn');
-        if (button) {
-          // pass the feature properties so the modal can resolve PUD variants
-          button.onclick = () => openAllowableUsesModal(hlurb, landUse, feature.properties);
-        }
+      layer.on('click', (e) => {
+        const latlng = [e.latlng.lat, e.latlng.lng];
+        popupDataRef.current = { hlurb, landUse, featureProps: feature.properties };
+        setPopupContent(
+          `<strong>Landuse:</strong> ${landUse}<br/>` +
+          `<strong>HLURB:</strong> ${hlurb}<br/>` +
+          `<button type="button" class="allowable-uses-btn">View Allowable Uses</button>`
+        );
+        setMarkerPos(latlng);
+        // setLocationName('');
       });
     }
   };
+
+  useEffect(() => {
+    if (markerRef.current) {
+      markerRef.current.closePopup();
+      if (popupHandlerRef.current) {
+        markerRef.current.off('popupopen', popupHandlerRef.current);
+        popupHandlerRef.current = null;
+      }
+      markerRef.current.unbindPopup();
+    }
+    if (markerPos && markerRef.current && popupContent) {
+      const handler = () => {
+        const popupEl = markerRef.current?.getPopup()?.getElement();
+        const btn = popupEl?.querySelector('.allowable-uses-btn');
+        if (btn) {
+          const { hlurb, landUse, featureProps } = popupDataRef.current;
+          btn.onclick = () => openAllowableUsesModal(hlurb, landUse, featureProps);
+        }
+      };
+      popupHandlerRef.current = handler;
+      markerRef.current.bindPopup(popupContent);
+      markerRef.current.on('popupopen', handler);
+      requestAnimationFrame(() => {
+        markerRef.current?.openPopup();
+      });
+    }
+    return () => {
+      if (markerRef.current) {
+        markerRef.current.closePopup();
+        if (popupHandlerRef.current) {
+          markerRef.current.off('popupopen', popupHandlerRef.current);
+          popupHandlerRef.current = null;
+        }
+        markerRef.current.unbindPopup();
+      }
+    };
+  }, [markerPos, popupContent]);
 
   const toggleAllZones = (visible) => {
     // Force ALL base legend codes to the same visibility
@@ -331,6 +446,41 @@ function MapViewPage() {
     }
   };
 
+  const handleCoordinateSearch = () => {
+    const lat = parseFloat(coordLat);
+    const lng = parseFloat(coordLng);
+
+    if (isNaN(lat) || isNaN(lng)) {
+      alert('Please enter valid latitude and longitude values.');
+      return;
+    }
+
+    if (lat < 8.70 || lat > 9.10 || lng < 125.30 || lng > 125.80) {
+      alert('Coordinates are outside Butuan City bounds.');
+      return;
+    }
+
+    setMarkerPos([lat, lng]);
+    // setLocationName(`${lat}, ${lng}`);
+
+    const zoning = findZoningAtPoint([lat, lng]);
+    if (zoning) {
+      popupDataRef.current = { hlurb: zoning.HLURB, landUse: zoning.LandUse, featureProps: zoning };
+      setPopupContent(
+        `<strong style="font-size:13px;">${lat}, ${lng}</strong><br/><br/>` +
+        `<strong>Landuse:</strong> ${zoning.LandUse}<br/>` +
+        `<strong>HLURB:</strong> ${zoning.HLURB}<br/>` +
+        `<button type="button" class="allowable-uses-btn">View Allowable Uses</button>`
+      );
+    } else {
+      setPopupContent(`<strong style="font-size:13px;">${lat}, ${lng}</strong>`);
+    }
+
+    if (mapRef.current) {
+      mapRef.current.flyTo([lat, lng], 15);
+    }
+  };
+
   const handleBarangaySelect = async (barangay) => {
     if (!barangay) return;
 
@@ -344,10 +494,28 @@ function MapViewPage() {
       if (data.length > 0) {
         const { lat, lon } = data[0];
         const displayName = data[0].display_name;
-        // console.log(`Found location: ${displayName} at (${lat}, ${lon})`);
         const position = [parseFloat(lat), parseFloat(lon)];
         setMarkerPos(position);
-        setLocationName(displayName);
+        // setLocationName(displayName);
+
+        const zoning = findZoningAtPoint(position);
+        if (zoning) {
+          popupDataRef.current = { hlurb: zoning.HLURB, landUse: zoning.LandUse, featureProps: zoning };
+          setPopupContent(
+            `<strong style="font-size:13px;">${barangay}</strong><br/>` +
+            `<span style="font-size:11px; color:#666;">${displayName}</span><br/>` +
+            `<span style="font-size:11px; color:#666;">${lat}, ${lon}</span><br/><br/>` +
+            `<strong>Landuse:</strong> ${zoning.LandUse}<br/>` +
+            `<strong>HLURB:</strong> ${zoning.HLURB}<br/>` +
+            `<button type="button" class="allowable-uses-btn">View Allowable Uses</button>`
+          );
+        } else {
+          setPopupContent(
+            `<strong style="font-size:13px;">${barangay}</strong><br/>` +
+            `<span style="font-size:11px; color:#666;">${displayName}</span><br/>` +
+            `<span style="font-size:11px; color:#666;">${lat}, ${lon}</span>`
+          );
+        }
 
         if (mapRef.current) {
           mapRef.current.flyTo(position, 15);
@@ -355,45 +523,168 @@ function MapViewPage() {
       } else {
         alert('Location not found');
         setMarkerPos(null);
-        setLocationName('');
+        // setLocationName('');
       }
     } catch (e) {
       console.error(e);
-      alert('Error searching for barangay');
+      alert('Error searching for location');
+    }
+  };
+
+  const handleSearchSelect = async (item) => {
+    if (!item || !item.lat) return;
+
+    const position = [parseFloat(item.lat), parseFloat(item.lon)];
+    setMarkerPos(position);
+    // setLocationName(item.display_name);
+
+    const zoning = findZoningAtPoint(position);
+    if (zoning) {
+      popupDataRef.current = { hlurb: zoning.HLURB, landUse: zoning.LandUse, featureProps: zoning };
+      setPopupContent(
+        `<strong style="font-size:13px;">${item.display_name}</strong><br/><br/>` +
+        `<strong>Landuse:</strong> ${zoning.LandUse}<br/>` +
+        `<strong>HLURB:</strong> ${zoning.HLURB}<br/>` +
+        `<button type="button" class="allowable-uses-btn">View Allowable Uses</button>`
+      );
+    } else {
+      setPopupContent(`<strong style="font-size:13px;">${item.display_name}</strong>`);
+    }
+
+    if (mapRef.current) {
+      mapRef.current.flyTo(position, 16);
     }
   };
 
   return (
     <div className='mapView'>
       <div className='searchBar'>
-        <label className="barangayDropdownLabel" htmlFor="barangay-select">
-          <span>Barangays</span>
-          <select
-            id="barangay-select"
-            value={selectedBarangay}
-            onChange={(e) => {
-              const barangay = e.target.value;
-              setSelectedBarangay(barangay);
-              handleBarangaySelect(barangay);
-            }}
+        <div className='searchModeToggle'>
+          <button
+            type="button"
+            className={searchMode === 'barangay' ? 'active' : ''}
+            onClick={() => setSearchMode('barangay')}
           >
-            <option value="">Select a barangay</option>
-            {uniqueBarangays.map((barangay) => (
-              <option key={barangay} value={barangay}>
-                {barangay}
-              </option>
-            ))}
-          </select>
-        </label>
-        <button
-          type="button"
-          className="barangaySearchButton"
-          onClick={() => handleBarangaySelect(selectedBarangay)}
-          disabled={!selectedBarangay}
-        >
-          <Icon path={mdiMagnify} size={0.9} />
-          Find
-        </button>
+            Location
+          </button>
+          <button
+            type="button"
+            className={searchMode === 'coordinates' ? 'active' : ''}
+            onClick={() => setSearchMode('coordinates')}
+          >
+            Coordinates
+          </button>
+        </div>
+        <div className='searchInputRow'>
+          {searchMode === 'barangay' ? (
+            <div className="barangayAutocomplete">
+              <input
+                type="text"
+                className="barangayAutocompleteInput"
+                placeholder="Search location..."
+                value={barangayFilter}
+                onChange={(e) => {
+                  setBarangayFilter(e.target.value);
+                  setSelectedBarangay('');
+                  setShowBarangayDropdown(true);
+                }}
+                onFocus={() => setShowBarangayDropdown(true)}
+                onBlur={() => setTimeout(() => setShowBarangayDropdown(false), 200)}
+              />
+              <span className="barangayAutocompleteArrow">▾</span>
+              {showBarangayDropdown && (filteredBarangays.length > 0 || osmResults.length > 0) && (
+                <div className="barangayAutocompleteDropdown">
+                  {filteredBarangays.map((b) => (
+                    <div
+                      key={b}
+                      className="barangayAutocompleteOption"
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        setSelectedBarangay(b);
+                        setBarangayFilter(b);
+                        setShowBarangayDropdown(false);
+                        handleBarangaySelect(b);
+                      }}
+                    >
+                      <span>{b}</span>
+                      <span className="searchItemBadge">Barangay</span>
+                    </div>
+                  ))}
+                  {filteredBarangays.length > 0 && osmResults.length > 0 && (
+                    <div className="barangayAutocompleteDivider" />
+                  )}
+                  {osmResults.map((item, i) => (
+                    <div
+                      key={'osm-' + i}
+                      className="barangayAutocompleteOption"
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        setSelectedBarangay(item.display_name);
+                        setBarangayFilter(item.display_name);
+                        setShowBarangayDropdown(false);
+                        handleSearchSelect(item);
+                      }}
+                    >
+                      <span>{item.display_name}</span>
+                      <span className="searchItemBadge">{item.type}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className='coordInputs'>
+              <label className="coordInput">
+                <span>Lat</span>
+                <input
+                  type="number"
+                  step="any"
+                  value={coordLat}
+                  onChange={(e) => setCoordLat(e.target.value)}
+                  placeholder="8.9475"
+                />
+              </label>
+              <label className="coordInput">
+                <span>Lng</span>
+                <input
+                  type="number"
+                  step="any"
+                  value={coordLng}
+                  onChange={(e) => setCoordLng(e.target.value)}
+                  placeholder="125.5406"
+                />
+              </label>
+            </div>
+          )}
+          <button
+            type="button"
+            className="barangaySearchButton"
+            onClick={() => {
+              if (searchMode === 'barangay') {
+                const foundOsm = osmResults.find(r => r.display_name === selectedBarangay);
+                if (foundOsm) {
+                  handleSearchSelect(foundOsm);
+                } else if (uniqueBarangays.includes(selectedBarangay)) {
+                  handleBarangaySelect(selectedBarangay);
+                } else if (selectedBarangay) {
+                  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(selectedBarangay)}&format=json&limit=1&bounded=1&viewbox=125.30,8.70,125.80,9.10`;
+                  fetch(url).then(r => r.json()).then(data => {
+                    if (data.length > 0) handleSearchSelect(data[0]);
+                    else alert('Location not found');
+                  });
+                }
+              } else {
+                handleCoordinateSearch();
+              }
+            }}
+            disabled={
+              searchMode === 'barangay' ? !selectedBarangay : !coordLat || !coordLng
+            }
+          >
+            <Icon path={mdiMagnify} size={0.9} />
+            Find
+          </button>
+        </div>
       </div>
       <MapContainer 
         ref={mapRef}
@@ -408,7 +699,7 @@ function MapViewPage() {
         {/* Satellite Base Map */}
         <TileLayer
           url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-          attribution="Tiles © Esri"
+          attribution={`Basemap: Esri Satellite Imagery (${new Date().getFullYear()})`}
           noWrap={true}
         />
 
@@ -419,9 +710,7 @@ function MapViewPage() {
         {/* Your GeoJSON Layer */}
         {gj && <GeoJSON ref={geoJsonRef} data={gj} style={zoningStyle} onEachFeature={onEachFeature} />}
         {markerPos && (
-          <Marker position={markerPos}>
-            <Popup>{locationName}</Popup>
-          </Marker>
+          <Marker ref={markerRef} position={markerPos} />
         )}
         {patterns && gj && (
           <ZoningLegend 
@@ -429,6 +718,9 @@ function MapViewPage() {
             visibleZones={visibleZones}
             toggleZoneVisibility={toggleZoneVisibility}
             toggleAllZones={toggleAllZones}
+            zoneOpacity={zoneOpacity}
+            onOpacityChange={setZoneOpacity}
+            onSliderDrag={handleSliderDrag}
          />
         )}
 
@@ -442,7 +734,7 @@ function MapViewPage() {
           <div className="allowable-modal-backdrop" role="dialog" aria-modal="true" onClick={closeAllowableUsesModal}>
             <div className="allowable-modal" onClick={(e) => e.stopPropagation()}>
               <div className="allowable-modal-header">
-                <h3>
+                <h3 style={{color: "black"}}>
                   Allowable Uses for {allowableUses?.map((item, index) => (
                       item.title && index === 0 ? item.title : null
                     ))}:

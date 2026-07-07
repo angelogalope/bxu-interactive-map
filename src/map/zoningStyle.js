@@ -1,6 +1,6 @@
 // src/map/zoningStyle.js
 
-export const createZoningStyle = ({ patterns, visibleZones }) => {
+export const createZoningStyle = ({ patterns, visibleZones, opacity = 0.7 }) => {
   return (feature) => {
     const hlurb = feature.properties?.HLURB;
 
@@ -29,9 +29,9 @@ export const createZoningStyle = ({ patterns, visibleZones }) => {
       "MU4-B": { fillColor: "#cd6798" },
       "Q-SZ": { fillColor: "#993300" },
       "UTS-Z": { fillColor: "#bebebe" },
-      Water: { fillColor: "#00c5ff", fillOpacity: 0.8 },
+      Water: { fillColor: "#00c5ff", fillOpacity: opacity },
       "FZ-Prod": { fillColor: "#006400" },
-      "SPZ": { fillColor: "#00734c", fillOpacity: 0.7 },
+      "SPZ": { fillColor: "#00734c", fillOpacity: opacity },
       "T-Z": { fillColor: "#ff9900" },
       "WZ-Prod": { fillColor: "#afc8e1" },
     };
@@ -39,7 +39,8 @@ export const createZoningStyle = ({ patterns, visibleZones }) => {
     if (SOLID[hlurb]) {
       return {
         color: "#828282",
-        fillOpacity: 0.5,
+        weight: 1,
+        fillOpacity: opacity,
         opacity: 1,
         ...SOLID[hlurb],
       };
@@ -63,8 +64,9 @@ export const createZoningStyle = ({ patterns, visibleZones }) => {
     if (PATTERN[hlurb]) {
       return {
         fillPattern: PATTERN[hlurb],
-        fillOpacity: 1,
+        fillOpacity: opacity,
         color: "#828282",
+        weight: 1,
         opacity: 1,
       };
     }
@@ -73,8 +75,9 @@ export const createZoningStyle = ({ patterns, visibleZones }) => {
     if (hlurb?.startsWith("SEDZ")) {
       return {
         fillPattern: patterns.purpleGraySingle,
-        fillOpacity: 1,
+        fillOpacity: opacity,
         color: "#828282",
+        weight: 1,
         opacity: 1,
       };
     }
@@ -84,8 +87,8 @@ export const createZoningStyle = ({ patterns, visibleZones }) => {
       return {
         color: "#005ce6",
         fillColor: "#afc8e1",
-        fillOpacity: 0.5,
-        weight: 4,
+        fillOpacity: opacity,
+        weight: 1,
         opacity: 1,
       };
     }
