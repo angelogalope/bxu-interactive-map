@@ -4,13 +4,14 @@ import "leaflet/dist/leaflet.css";
 import "leaflet.pattern";
 import L from 'leaflet';
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import ZoningLegend from "../components/ZoningLegend.jsx";
+import ZoningLegend from "../../../../components/interactive-zoning-map-system/ZoningLegend.jsx";
 import Icon from '@mdi/react';
 import { mdiMagnify } from '@mdi/js'
 import legendData from "../data/legendData.js"
 import PatternsSetup from '../map/PatternsSetup.jsx';
 import { createZoningStyle } from "../map/zoningStyle";
-import MapWatermarkOverlay from "../components/MapWatermarkOverlay.jsx";
+import MapWatermarkOverlay from "../../../../components/interactive-zoning-map-system/MapWatermarkOverlay.jsx";
+import FaqModal from "../../../../components/interactive-zoning-map-system/FaqModal.jsx";
 import allowableUsesData from "../data/allowableUsesData";
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
@@ -142,6 +143,8 @@ function MapViewPage() {
   const [coordLng, setCoordLng] = useState('');
   const [showBarangayDropdown, setShowBarangayDropdown] = useState(false);
   const [zoneOpacity, setZoneOpacity] = useState(0.7);
+  const [showFooterNote, setShowFooterNote] = useState(true);
+  const [isFaqOpen, setIsFaqOpen] = useState(false);
   const [osmResults, setOsmResults] = useState([]);
   const geoJsonRef = useRef();
 
@@ -558,6 +561,9 @@ function MapViewPage() {
 
   return (
     <div className='mapView'>
+      <div className="mapHeader">
+        <h1 className="mapTitle">Butuan City Comprehensive Land Use Plan 2019-2028</h1>
+      </div>
       <div className='searchBar'>
         <div className='searchModeToggle'>
           <button
@@ -726,6 +732,40 @@ function MapViewPage() {
 
       </MapContainer>
 
+      <button
+        type="button"
+        className="mapInfoBtn"
+        onClick={() => setShowFooterNote(true)}
+        title="Show disclaimer"
+        aria-label="Show disclaimer"
+      >
+        i
+      </button>
+
+      <button
+        type="button"
+        className="mapFaqBtn"
+        onClick={() => setIsFaqOpen(true)}
+        title="Frequently Asked Questions"
+        aria-label="Open frequently asked questions"
+      >
+        FAQs
+      </button>
+
+      {showFooterNote && (
+        <div className="mapFooterNote">
+          <button
+            type="button"
+            className="mapFooterNoteClose"
+            onClick={() => setShowFooterNote(false)}
+            aria-label="Close disclaimer"
+          >
+            ×
+          </button>
+          This map is for reference and planning purposes only and does not serve as an official document. For official certification, please visit the CPDD (City Planning and Development Department) office.
+        </div>
+      )}
+
       {isAllowableModalOpen && (() => {
         // const normalizedHlurb = selectedHlurb?.startsWith("SEDZ") ? "SEDZ" : selectedHlurb;
         const allowableUses = allowableUsesData[selectedHlurb] || [];
@@ -764,6 +804,8 @@ function MapViewPage() {
           </div>
         );
       })()}
+
+      <FaqModal isOpen={isFaqOpen} onClose={() => setIsFaqOpen(false)} />
     </div>
   );
 }
