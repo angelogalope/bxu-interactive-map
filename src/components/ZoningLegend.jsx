@@ -2,8 +2,8 @@
 import L from "leaflet";
 import { useEffect, useState } from "react";
 import { useMap } from "react-leaflet";
-import legendData from "../data/legendData.js";
-import { getPatternSvg } from "../utils/patternUtils.js";  
+import legendData from "../../pages/public/interactive-zoning-map-system/data/legendData.js";
+import { getPatternSvg } from "../../utils/interactive-zoning-map-system/patternUtils.js";  
 
 const ZoningLegend = ({ patterns, visibleZones, toggleZoneVisibility, toggleAllZones, zoneOpacity = 0.7, onOpacityChange, onSliderDrag }) => {
   const map = useMap();
