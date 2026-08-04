@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import faqData from "../../pages/public/interactive-zoning-map-system/data/faqData";
+import faqData from "../data/faqData.js";
 
 export default function FaqModal({ isOpen, onClose }) {
   const [openIndex, setOpenIndex] = useState(0);

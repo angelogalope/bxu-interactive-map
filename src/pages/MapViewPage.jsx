@@ -4,14 +4,14 @@ import "leaflet/dist/leaflet.css";
 import "leaflet.pattern";
 import L from 'leaflet';
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import ZoningLegend from "../../../../components/interactive-zoning-map-system/ZoningLegend.jsx";
+import ZoningLegend from "../components/ZoningLegend.jsx";
 import Icon from '@mdi/react';
 import { mdiMagnify } from '@mdi/js'
 import legendData from "../data/legendData.js"
 import PatternsSetup from '../map/PatternsSetup.jsx';
 import { createZoningStyle } from "../map/zoningStyle";
-import MapWatermarkOverlay from "../../../../components/interactive-zoning-map-system/MapWatermarkOverlay.jsx";
-import FaqModal from "../../../../components/interactive-zoning-map-system/FaqModal.jsx";
+import MapWatermarkOverlay from "../components/MapWatermarkOverlay.jsx";
+import FaqModal from "../components/FaqModal.jsx";
 import allowableUsesData from "../data/allowableUsesData";
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
